@@ -80,7 +80,7 @@ module ElasticAPM
         stub = build_stub(
           headers: {
             'User-Agent' => %r{
-              \Aelastic-apm-ruby/(\d+\.)+\d+\s
+              \Aelastic-apm-ruby/(\d+\.)+\d+(-[a-z]+)?\s
               http.rb/(\d+\.)+\d+\s
               j?ruby/(\d+\.)+\d+\z
             }x

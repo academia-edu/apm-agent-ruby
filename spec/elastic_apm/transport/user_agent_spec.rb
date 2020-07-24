@@ -29,7 +29,7 @@ module ElasticAPM
         it 'builds a string' do
           expect(subject.to_s).to match(
             %r{
-              \Aelastic-apm-ruby/(\d+\.)+\d+\s
+              \Aelastic-apm-ruby/(\d+\.)+\d+(-[a-z]+)?\s
               http.rb/(\d+\.)+\d+\s
               j?ruby/(\d+\.)+\d+\z
             }x
