@@ -41,6 +41,10 @@ module ElasticAPM
           it(desc) do
             expect(described_class.parse(info['input'])).to eq(info['output'])
           end
+
+          it("#{desc} (with comment)") do
+            expect(described_class.parse("/* marginalia comment */ #{info['input']}")).to eq(info['output'])
+          end
         end
       end
     end

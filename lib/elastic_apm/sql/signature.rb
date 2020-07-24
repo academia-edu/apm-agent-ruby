@@ -42,18 +42,16 @@ module ElasticAPM
 
       def parse
         loop do
-          @tokenizer.scan
-          break unless @tokenizer.token == COMMENT
+          break unless @tokenizer.scan && @tokenizer.token == COMMENT
         end
+
+        first_token_text = @tokenizer.text&.strip
 
         parsed = parse_tokens
         return parsed if parsed
 
-        # If all else fails, just return the first token of the query.
-        parts = @sql.split
-        return '' unless parts.any?
-
-        parts.first.upcase
+        # If all else fails, just return the first non-comment token of the query.
+        first_token_text
       end
 
       def self.parse(sql)
@@ -68,7 +66,6 @@ module ElasticAPM
         t = @tokenizer
 
         case t.token
-
         when CALL
           return unless scan_until IDENT
           "CALL #{t.text}"
