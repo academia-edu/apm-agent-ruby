@@ -24,6 +24,7 @@ module ElasticAPM
   class SqlSummarizer
     DEFAULT = 'SQL'
     TABLE_REGEX = %{["'`]?([A-Za-z0-9_]+)["'`]?}
+    COMMENTS_REGEX = %r[/\*.*?\*/\s*|\s*--.*$]iu
 
     REGEXES = {
       /^BEGIN/iu => 'BEGIN',
@@ -42,6 +43,7 @@ module ElasticAPM
 
     def summarize(sql)
       sql = sql.encode('utf-8', invalid: :replace, undef: :replace)
+      sql = sql.gsub(COMMENTS_REGEX, '')
       self.class.cache[sql] ||=
         REGEXES.find do |regex, sig|
           if (match = sql[0...1000].match(regex))
