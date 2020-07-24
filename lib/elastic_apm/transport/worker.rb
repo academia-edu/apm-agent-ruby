@@ -25,7 +25,7 @@ module ElasticAPM
 
       class << self
         def adapter
-          @adapter ||= Connection
+          @adapter ||= RoundRobinConnection
         end
 
         attr_writer :adapter

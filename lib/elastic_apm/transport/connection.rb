@@ -35,14 +35,14 @@ module ElasticAPM
       # with ongoing write requests to `http`, write and close
       # requests have to be synchronized.
 
-      def initialize(config)
+      def initialize(config, server_url: config.server_url[0])
         @config = config
         @metadata = JSON.fast_generate(
           Serializers::MetadataSerializer.new(config).build(
             Metadata.new(config)
           )
         )
-        @url = config.server_url + '/intake/v2/events'
+        @url = server_url + '/intake/v2/events'
         @mutex = Mutex.new
       end
 

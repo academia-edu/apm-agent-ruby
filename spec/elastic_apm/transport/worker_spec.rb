@@ -38,7 +38,7 @@ module ElasticAPM
       describe '#initialize' do
         its(:filters) { should be_a Filters::Container }
         its(:serializers) { should be_a Serializers::Container }
-        its(:connection) { should be_a Connection }
+        its(:connection) { should respond_to :write }
       end
 
       describe '#work_forever' do

@@ -157,10 +157,13 @@ module ElasticAPM
     end
 
     def server_url
-      @server_url ||=
-        config.server_url +
-        '/config/v1/agents' \
-        "?service.name=#{config.service_name}"
+      return @server_urls.rotate!(1)[0] if defined?(@server_urls)
+
+      @server_urls = config.
+        server_url.
+        map { |url| "#{url}/config/v1/agents?service.name=#{config.service_name}" }
+
+      @server_urls[0]
     end
 
     def headers

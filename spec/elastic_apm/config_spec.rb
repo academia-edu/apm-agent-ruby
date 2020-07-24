@@ -23,27 +23,27 @@ module ElasticAPM
   RSpec.describe Config do
     it 'has defaults' do
       config = Config.new
-      expect(config.server_url).to eq 'http://localhost:8200'
+      expect(config.server_url).to eq ['http://localhost:8200']
     end
 
     it 'overwrites defaults' do
       config = Config.new(server_url: 'somewhere-else.com')
-      expect(config.server_url).to eq 'somewhere-else.com'
+      expect(config.server_url).to eq ['somewhere-else.com']
     end
 
     it 'loads from config file' do
       config = Config.new(config_file: 'spec/fixtures/elastic_apm.yml')
-      expect(config.server_url).to eq 'somewhere-config.com'
+      expect(config.server_url).to eq ['somewhere-config.com']
     end
 
     it 'loads from erb-styled config file' do
       config = Config.new(config_file: 'spec/fixtures/elastic_apm_erb.yml')
-      expect(config.server_url).to eq 'somewhere-config.com'
+      expect(config.server_url).to eq ['somewhere-config.com']
     end
 
     it 'takes options from ENV' do
       with_env('ELASTIC_APM_SERVER_URL' => 'by-env!') do
-        expect(Config.new.server_url).to eq 'by-env!'
+        expect(Config.new.server_url).to eq ['by-env!']
       end
     end
 
@@ -82,7 +82,7 @@ module ElasticAPM
       with_env('ELASTIC_APM_CONFIG_FILE' => 'spec/fixtures/elastic_apm.yml') do
         config = Config.new
         expect(config.config_file).to eq('spec/fixtures/elastic_apm.yml')
-        expect(config.server_url).to eq('somewhere-config.com')
+        expect(config.server_url).to eq(['somewhere-config.com'])
       end
     end
 
@@ -91,7 +91,7 @@ module ElasticAPM
         subject { Config.new(server_url: 'http://localhost:8200/') }
 
         it 'strips the trailing slash' do
-          expect(subject.server_url).to eq('http://localhost:8200')
+          expect(subject.server_url).to eq(['http://localhost:8200'])
         end
       end
 
@@ -99,7 +99,7 @@ module ElasticAPM
         subject { Config.new(server_url: URI('http://localhost:8200/')) }
 
         it 'strips the trailing slash' do
-          expect(subject.server_url).to eq('http://localhost:8200')
+          expect(subject.server_url).to eq(['http://localhost:8200'])
         end
       end
     end
@@ -153,7 +153,7 @@ module ElasticAPM
 
     it 'yields itself to a given block' do
       config = Config.new { |c| c.server_url = 'somewhere-else.com' }
-      expect(config.server_url).to eq 'somewhere-else.com'
+      expect(config.server_url).to eq ['somewhere-else.com']
     end
 
     it 'has spies and may disable them' do
@@ -291,7 +291,7 @@ module ElasticAPM
 
       it 'leaves existing config values unchanged' do
         subject.replace_options(api_request_time: '1s')
-        expect(subject.server_url).to eq('somewhere-else.com')
+        expect(subject.server_url).to eq(['somewhere-else.com'])
       end
 
       it 'replaces the options object' do

@@ -109,7 +109,7 @@ module ElasticAPM
       unless config.disable_start_message?
         config.logger.info format(
           '[%s] Starting agent, reporting to %s',
-          VERSION, config.server_url
+          VERSION, config.server_url.join(', ')
         )
       end
 

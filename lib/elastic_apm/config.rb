@@ -22,6 +22,7 @@ require 'elastic_apm/config/duration'
 require 'elastic_apm/config/bytes'
 require 'elastic_apm/config/regexp_list'
 require 'elastic_apm/config/wildcard_pattern_list'
+require 'elastic_apm/config/url_list'
 
 module ElasticAPM
   # @api private
@@ -32,7 +33,7 @@ module ElasticAPM
 
     # rubocop:disable Metrics/LineLength, Layout/ExtraSpacing
     option :config_file,                       type: :string, default: 'config/elastic_apm.yml'
-    option :server_url,                        type: :url,    default: 'http://localhost:8200'
+    option :server_url,                        type: :url_list, default: ['http://localhost:8200'], converter: UrlList.new
     option :secret_token,                      type: :string
     option :api_key,                           type: :string
 
@@ -180,7 +181,7 @@ module ElasticAPM
     end
 
     def use_ssl?
-      server_url.start_with?('https')
+      server_url.any? { |url| url.start_with?('https') }
     end
 
     def collect_metrics?
