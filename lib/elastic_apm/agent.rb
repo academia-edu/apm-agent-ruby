@@ -90,6 +90,8 @@ module ElasticAPM
         stacktrace_builder: stacktrace_builder
       ) { |event| enqueue event }
       @pid = Process.pid
+
+      @error_contextualizers = {}
     end
 
     attr_reader(
@@ -100,7 +102,8 @@ module ElasticAPM
       :instrumenter,
       :metrics,
       :stacktrace_builder,
-      :transport
+      :transport,
+      :error_contextualizers
     )
 
     def_delegator :@central_config, :config
@@ -238,6 +241,14 @@ module ElasticAPM
       detect_forking!
       return if config.filter_exception_types.include?(exception.class.to_s)
 
+      if error_contextualizers.any?
+        context = error_contextualizers.
+          values.
+          reduce(context || Context.new) do |ctx, contextualizer|
+            contextualizer.call(exception, ctx) || ctx
+          end
+      end
+
       error = @error_builder.build_exception(
         exception,
         context: context,
@@ -265,6 +276,10 @@ module ElasticAPM
 
     def add_filter(key, callback)
       transport.add_filter(key, callback)
+    end
+
+    def add_error_contextualizer(key, callback)
+      @error_contextualizers[key] = callback
     end
 
     # misc

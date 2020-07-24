@@ -250,6 +250,18 @@ RSpec.describe ElasticAPM do
       end
     end
 
+    describe '#add_error_contextualizer' do
+      it { should delegate :add_error_contextualizer, to: agent, args: [nil, -> {}] }
+
+      it 'needs either callback or block' do
+        expect { subject.add_error_contextualizer(:key) }.to raise_error(ArgumentError)
+
+        expect do
+          subject.add_error_contextualizer(:key) { 'ok' }
+        end.to_not raise_error
+      end
+    end
+
     after { ElasticAPM.stop }
   end
 

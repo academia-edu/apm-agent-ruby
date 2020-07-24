@@ -185,6 +185,14 @@ module ElasticAPM
       end
     end
 
+    describe '#add_error_contextualizer' do
+      it 'may add error contextualizer' do
+        expect do
+          subject.add_error_contextualizer :key, -> {}
+        end.to change(subject.error_contextualizers, :length).by 1
+      end
+    end
+
     context 'when the process is forked' do
       around do |ex|
         subject.start

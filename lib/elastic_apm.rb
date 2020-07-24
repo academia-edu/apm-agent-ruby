@@ -381,5 +381,13 @@ module ElasticAPM
 
       agent&.add_filter(key, block || callback)
     end
+
+    def add_error_contextualizer(key, callback = nil, &block)
+      if callback.nil? && !block_given?
+        raise ArgumentError, '#add_error_contextualizer needs either `callback\' or a block'
+      end
+
+      agent&.add_error_contextualizer(key, block || callback)
+    end
   end
 end
