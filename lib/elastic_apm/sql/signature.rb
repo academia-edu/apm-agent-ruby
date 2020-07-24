@@ -41,7 +41,10 @@ module ElasticAPM
       end
 
       def parse
-        @tokenizer.scan # until tokenizer.token != COMMENT
+        loop do
+          @tokenizer.scan
+          break unless @tokenizer.token == COMMENT
+        end
 
         parsed = parse_tokens
         return parsed if parsed
