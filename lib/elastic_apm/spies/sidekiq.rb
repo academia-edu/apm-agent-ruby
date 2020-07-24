@@ -58,7 +58,7 @@ module ElasticAPM
       def install_middleware
         Sidekiq.configure_server do |config|
           config.server_middleware do |chain|
-            chain.add Middleware
+            chain.prepend Middleware
           end
         end
       end
