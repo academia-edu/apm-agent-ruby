@@ -112,6 +112,7 @@ module ElasticAPM
       trace_context: nil
     )
       return nil unless config.instrument?
+      return nil unless rand <= config.transaction_instrument_rate
 
       if (transaction = current_transaction)
         raise ExistingTransactionError,

@@ -89,6 +89,7 @@ module ElasticAPM
     option :span_frames_min_duration,          type: :float,  default: '5ms',   converter: Duration.new(default_unit: 'ms')
     option :stack_trace_limit,                 type: :int,    default: 999_999
     option :transaction_max_spans,             type: :int,    default: 500
+    option :transaction_instrument_rate,       type: :float,  default: 1.0
     option :transaction_sample_rate,           type: :float,  default: 1.0
     option :use_elastic_traceparent_header,    type: :bool,   default: true
     option :use_legacy_sql_parser,             type: :bool,   default: false

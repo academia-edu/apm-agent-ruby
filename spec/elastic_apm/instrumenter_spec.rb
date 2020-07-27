@@ -108,6 +108,15 @@ module ElasticAPM
         end
       end
 
+      context 'when transaction is not sampled for instrumentation' do
+        let(:config) { Config.new(transaction_instrument_rate: 0) }
+
+        it 'is nil' do
+          expect(subject.start_transaction(config: config)).to be nil
+          expect(subject.current_transaction).to be nil
+        end
+      end
+
       context 'with default labels' do
         let(:config) { Config.new(default_labels: { more: 'yes!' }) }
 
