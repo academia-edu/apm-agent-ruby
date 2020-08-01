@@ -17,27 +17,32 @@
 
 # frozen_string_literal: true
 
+require 'spec_helper'
+
+require 'aws-sdk-s3'
+
 module ElasticAPM
-  class Span
-    class Context
-      # @api private
-      class Http
-        def initialize(url: nil, status_code: nil, method: nil)
-          @url = url && sanitize_url(url)
-          @status_code = status_code
-          @method = method
-        end
+  RSpec.describe 'Spy: Dalli' do
+    it 'spans api calls', :intercept do
+      client = Aws::S3::Client.new(stub_responses: true)
 
-        attr_accessor :url, :status_code, :method
-
-        private
-
-        def sanitize_url(uri_or_str)
-          uri = uri_or_str.is_a?(URI) ? uri_or_str.dup : URI(uri_or_str)
-          uri.password = nil
-          uri.to_s
+      with_agent do
+        ElasticAPM.with_transaction do
+          client.create_bucket(bucket: 'foo')
         end
       end
+
+      span, = @intercepted.spans
+
+      expect(span.name).to eq 'S3 CreateBucket'
+      expect(span.subtype).to eq 'S3'
+      expect(span.action).to eq 'CreateBucket'
+
+      http = span.context.http
+      expect(http.method).to eq 'PUT'
+
+      db = span.context.db
+      expect(db.statement[:params]).to eq({ bucket: 'foo' })
     end
   end
 end

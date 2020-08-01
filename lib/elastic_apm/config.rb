@@ -132,6 +132,8 @@ module ElasticAPM
     def available_instrumentations
       %w[
         action_dispatch
+        aws_seahorse
+        dalli
         delayed_job
         elasticsearch
         faraday

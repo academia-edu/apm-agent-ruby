@@ -17,27 +17,29 @@
 
 # frozen_string_literal: true
 
+require 'spec_helper'
+
+require 'dalli'
+
 module ElasticAPM
-  class Span
-    class Context
-      # @api private
-      class Http
-        def initialize(url: nil, status_code: nil, method: nil)
-          @url = url && sanitize_url(url)
-          @status_code = status_code
-          @method = method
-        end
+  RSpec.describe 'Spy: Dalli' do
+    it 'spans queries', :intercept do
+      client = Dalli::Client.new('localhost:11211')
 
-        attr_accessor :url, :status_code, :method
-
-        private
-
-        def sanitize_url(uri_or_str)
-          uri = uri_or_str.is_a?(URI) ? uri_or_str.dup : URI(uri_or_str)
-          uri.password = nil
-          uri.to_s
+      with_agent do
+        ElasticAPM.with_transaction do
+          client.get('test_key')
         end
       end
+
+      span, = @intercepted.spans
+
+      expect(span.name).to eq 'GET test_key'
+
+      destination = span.context.destination
+      expect(destination.name).to eq 'memcached'
+      expect(destination.resource).to eq 'memcached'
+      expect(destination.type).to eq 'db'
     end
   end
 end

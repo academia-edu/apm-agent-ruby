@@ -55,6 +55,8 @@ gem 'sneakers', '~> 2.12', require: nil
 gem 'sucker_punch', '~> 2.0', require: nil
 gem 'yard', require: nil
 gem 'yarjuf'
+gem 'dalli', require: nil
+gem 'aws-sdk-s3', require: nil
 
 ## Install Framework
 GITHUB_REPOS = {
