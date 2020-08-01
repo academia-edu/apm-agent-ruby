@@ -24,9 +24,7 @@ module ElasticAPM
               context: Span::Context.new(
                 http: { method: http_method },
                 db: {
-                  statement: {
-                    params: self.context.params
-                  }
+                  statement: self.context.params.to_json
                 }
               )
             ) do
