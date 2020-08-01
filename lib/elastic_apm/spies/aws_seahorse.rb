@@ -21,12 +21,7 @@ module ElasticAPM
               TYPE,
               subtype: service_id,
               action: operation_name,
-              context: Span::Context.new(
-                http: { method: http_method },
-                db: {
-                  statement: self.context.params.to_json
-                }
-              )
+              context: Span::Context.new(http: { method: http_method })
             ) do
               AwsSeahorseSpy.without_http_spies do
                 send_request_without_apm(*args, &block)

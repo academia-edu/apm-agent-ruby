@@ -40,9 +40,6 @@ module ElasticAPM
 
       http = span.context.http
       expect(http.method).to eq 'PUT'
-
-      db = span.context.db
-      expect(JSON.parse(db.statement)).to eq({ 'bucket' => 'foo' })
     end
   end
 end
