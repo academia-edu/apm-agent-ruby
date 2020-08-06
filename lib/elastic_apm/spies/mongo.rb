@@ -109,6 +109,6 @@ module ElasticAPM
       end
     end
 
-    register 'Mongo', 'mongo', MongoSpy.new
+    register 'Mongo::Monitoring', 'mongo', MongoSpy.new
   end
 end
