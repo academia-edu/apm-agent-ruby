@@ -69,7 +69,8 @@ module ElasticAPM
 
       ElasticAPM.start_transaction 'Rack', 'request',
         context: context,
-        trace_context: trace_context(env)
+        trace_context: trace_context(env),
+        prioritize: ElasticAPM.agent&.request_prioritizers&.any? { |_k, p| p.call(env) }
     end
 
     def trace_context(env)

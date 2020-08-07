@@ -133,13 +133,15 @@ module ElasticAPM
       name = nil,
       type = nil,
       context: nil,
-      trace_context: nil
+      trace_context: nil,
+      prioritize: false
     )
       agent&.start_transaction(
         name,
         type,
         context: context,
-        trace_context: trace_context
+        trace_context: trace_context,
+        prioritize: prioritize
       )
     end
 
@@ -166,7 +168,8 @@ module ElasticAPM
       name = nil,
       type = nil,
       context: nil,
-      trace_context: nil
+      trace_context: nil,
+      prioritize: false
     )
       unless block_given?
         raise ArgumentError,
@@ -181,7 +184,8 @@ module ElasticAPM
             name,
             type,
             context: context,
-            trace_context: trace_context
+            trace_context: trace_context,
+            prioritize: prioritize
           )
         yield transaction
       ensure
@@ -388,6 +392,14 @@ module ElasticAPM
       end
 
       agent&.add_error_contextualizer(key, block || callback)
+    end
+
+    def add_request_prioritizer(key, callback = nil, &block)
+      if callback.nil? && !block_given?
+        raise ArgumentError, '#add_request_prioritizer needs either `callback\' or a block'
+      end
+
+      agent&.add_request_prioritizer(key, block || callback)
     end
   end
 end

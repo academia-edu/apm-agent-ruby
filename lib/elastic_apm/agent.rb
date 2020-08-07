@@ -92,6 +92,7 @@ module ElasticAPM
       @pid = Process.pid
 
       @error_contextualizers = {}
+      @request_prioritizers = {}
     end
 
     attr_reader(
@@ -103,7 +104,8 @@ module ElasticAPM
       :metrics,
       :stacktrace_builder,
       :transport,
-      :error_contextualizers
+      :error_contextualizers,
+      :request_prioritizers
     )
 
     def_delegator :@central_config, :config
@@ -164,7 +166,8 @@ module ElasticAPM
       name = nil,
       type = nil,
       context: nil,
-      trace_context: nil
+      trace_context: nil,
+      prioritize: false
     )
       return unless config.recording?
       detect_forking!
@@ -174,7 +177,8 @@ module ElasticAPM
         type,
         config: config,
         context: context,
-        trace_context: trace_context
+        trace_context: trace_context,
+        prioritize: prioritize
       )
     end
 
@@ -280,6 +284,10 @@ module ElasticAPM
 
     def add_error_contextualizer(key, callback)
       @error_contextualizers[key] = callback
+    end
+
+    def add_request_prioritizer(key, callback)
+      @request_prioritizers[key] = callback
     end
 
     # misc

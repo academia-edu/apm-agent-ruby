@@ -109,10 +109,11 @@ module ElasticAPM
       type = nil,
       config:,
       context: nil,
-      trace_context: nil
+      trace_context: nil,
+      prioritize: false
     )
       return nil unless config.instrument?
-      return nil unless rand <= config.transaction_instrument_rate
+      return nil unless prioritize || rand <= config.transaction_instrument_rate
 
       if (transaction = current_transaction)
         raise ExistingTransactionError,
@@ -120,7 +121,7 @@ module ElasticAPM
           "Already inside #{transaction.inspect}"
       end
 
-      sampled = trace_context ? trace_context.recorded? : random_sample?(config)
+      sampled = prioritize || (trace_context ? trace_context.recorded? : random_sample?(config))
 
       transaction =
         Transaction.new(

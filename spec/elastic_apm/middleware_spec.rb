@@ -76,6 +76,28 @@ module ElasticAPM
       expect(trace_context).to be_recorded
     end
 
+    it 'respects request prioritizers' do
+      with_agent(transaction_sample_rate: 0) do
+        ElasticAPM.add_request_prioritizer(:all) do |env|
+          env['PATH_INFO'] == '/'
+        end
+
+        app = Middleware.new(->(_) { [200, {}, ['ok']] })
+
+        status, = app.call(Rack::MockRequest.env_for('/'))
+        expect(status).to be 200
+
+        status, = app.call(Rack::MockRequest.env_for('/hello_there'))
+        expect(status).to be 200
+      end
+
+      ft, st = @intercepted.transactions
+      expect(ft).to_not be_nil
+      expect(st).to_not be_nil
+      expect(ft).to be_sampled
+      expect(st).to_not be_sampled
+    end
+
     describe 'Distributed Tracing' do
       let(:app) { Middleware.new(->(_) { [200, {}, ['ok']] }) }
 
