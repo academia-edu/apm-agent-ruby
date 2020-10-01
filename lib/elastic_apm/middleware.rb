@@ -67,7 +67,8 @@ module ElasticAPM
     def start_transaction(env)
       context = ElasticAPM.build_context(rack_env: env, for_type: :transaction)
 
-      ElasticAPM.start_transaction 'Rack', 'request',
+      ElasticAPM.start_transaction(
+        'Rack', 'request',
         context: context,
         trace_context: trace_context(env),
         prioritize: ElasticAPM.agent&.request_prioritizers&.any? do |_k, p|
@@ -75,6 +76,7 @@ module ElasticAPM
         rescue
           false
         end
+      )
     end
 
     def trace_context(env)
